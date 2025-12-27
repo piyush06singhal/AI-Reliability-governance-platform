@@ -37,7 +37,7 @@ class GuardrailsEngine:
             "high_risk_fallback": Policy(
                 policy_id="high_risk_fallback",
                 name="Fallback for High Risk",
-                risk_threshold=0.5,
+                risk_threshold=0.6,  # Increased from 0.5 to reduce false positives
                 action="fallback"
             ),
             "medium_risk_rewrite": Policy(
@@ -101,7 +101,7 @@ class GuardrailsEngine:
                 action="fallback",
                 policy_id=policy.policy_id,
                 reason=f"Fallback triggered for {risk_assessment.risk_category} risk",
-                modified_response="I apologize, but I cannot provide a response to that request. Please rephrase or contact support."
+                modified_response="I cannot assist with that request as it may involve harmful or unethical activities. Please ask something else that I can help with constructively."
             )
         
         elif policy.action == "rewrite":
