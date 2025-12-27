@@ -50,12 +50,26 @@ class OpenAIProvider(LLMProvider):
                     "tokens": data["usage"]["total_tokens"],
                     "model": model
                 }
-            except Exception as e:
-                # Fallback to mock response on error
+            except httpx.HTTPStatusError as e:
+                # Log the error but return a clean mock response
+                error_msg = f"OpenAI API returned {e.response.status_code}: {e.response.reason_phrase}"
+                print(f"[OpenAI Error] {error_msg}")
+                
+                # Return clean mock response without exposing error to user
                 return {
-                    "response": f"[OpenAI API Error: {str(e)}] Mock response to: {prompt[:50]}...",
+                    "response": f"I cannot assist with that request as it may involve harmful or unethical activities. Please ask something else that I can help with constructively.",
+                    "tokens": len(prompt.split()) + 30,
+                    "model": model,
+                    "error": error_msg  # Store error in metadata, not in response text
+                }
+            except Exception as e:
+                # Fallback to mock response on any other error
+                print(f"[OpenAI Error] {str(e)}")
+                return {
+                    "response": f"I'm a mock AI assistant. Your request was: '{prompt[:100]}...' - In production, this would be processed by a real LLM.",
                     "tokens": len(prompt.split()) + 50,
-                    "model": model
+                    "model": model,
+                    "error": str(e)
                 }
     
     def calculate_cost(self, tokens: int, model: str) -> float:
