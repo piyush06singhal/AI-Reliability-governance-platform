@@ -357,10 +357,40 @@ if "feedback_summary" in health:
         st.sidebar.metric("Avg Rating", f"{feedback['avg_rating']:.1f}⭐")
         st.sidebar.metric("Total Feedback", feedback["total"])
 
+# Reset button in sidebar
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔄 System Controls")
+if st.sidebar.button("🗑️ Reset All Data", type="secondary", use_container_width=True):
+    # Clear the cache to reset the platform
+    st.cache_resource.clear()
+    st.success("✅ All data has been reset!")
+    st.rerun()
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("💡 **Tip:** Start with '🧪 Test Interaction' to generate data!")
+
 # PAGE 1: Enhanced System Overview
 if page == "📊 System Overview":
     st.markdown('<p class="main-header">System Overview</p>', unsafe_allow_html=True)
     st.markdown("**Real-time monitoring of AI reliability and governance metrics**")
+    
+    # Welcome banner for new users
+    if health["performance"]["total_requests"] == 0:
+        st.markdown("""
+        <div style="padding: 2rem; margin: 2rem 0; border-radius: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);">
+            <h2 style="margin: 0 0 1rem 0; color: white;">👋 Welcome to AI Governance Platform!</h2>
+            <p style="font-size: 1.1rem; margin: 0 0 1.5rem 0; opacity: 0.95;">
+                Get started by testing your first LLM interaction. This will generate data for all monitoring features.
+            </p>
+            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                <strong>🚀 Quick Start:</strong><br>
+                1. Click <strong>"🧪 Test Interaction"</strong> in the sidebar<br>
+                2. Enter a prompt and select a model<br>
+                3. Click "Send Request" to see the platform in action<br>
+                4. Return here to view analytics and insights
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Key metrics with enhanced cards
     col1, col2, col3, col4 = st.columns(4)
@@ -500,7 +530,13 @@ elif page == "🔍 Interaction Explorer":
     interactions = platform.get_all_interactions()
     
     if not interactions:
-        st.info("📭 No interactions logged yet. Try the 'Test Interaction' page to generate some data.")
+        st.markdown("""
+        <div class="alert-box alert-info">
+            <h3 style="margin-top: 0;">📭 No Interactions Yet</h3>
+            <p>Start by testing an LLM interaction to see data here.</p>
+            <p><strong>👉 Go to "🧪 Test Interaction"</strong> in the sidebar to get started!</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         # Enhanced filters
         col1, col2, col3, col4 = st.columns(4)
@@ -573,7 +609,13 @@ elif page == "⚠️ Risk & Safety":
     risk_trends = platform.risk_engine.get_risk_trends()
     
     if risk_trends["total"] == 0:
-        st.info("⚠️ No risk assessments available yet.")
+        st.markdown("""
+        <div class="alert-box alert-info">
+            <h3 style="margin-top: 0;">⚠️ No Risk Assessments Yet</h3>
+            <p>Risk analysis will appear here after you test some interactions.</p>
+            <p><strong>👉 Go to "🧪 Test Interaction"</strong> to generate risk data!</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         # Summary metrics with enhanced styling
         col1, col2, col3, col4 = st.columns(4)
@@ -684,7 +726,13 @@ elif page == "💰 Cost & Performance":
     perf = platform.cost_monitor.get_performance_summary()
     
     if perf["total_requests"] == 0:
-        st.info("💰 No performance data available yet.")
+        st.markdown("""
+        <div class="alert-box alert-info">
+            <h3 style="margin-top: 0;">💰 No Performance Data Yet</h3>
+            <p>Cost and performance metrics will appear here after testing interactions.</p>
+            <p><strong>👉 Go to "🧪 Test Interaction"</strong> to start tracking costs!</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         # Key metrics
         col1, col2, col3, col4 = st.columns(4)
