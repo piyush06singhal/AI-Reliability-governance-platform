@@ -1089,7 +1089,9 @@ elif page == "📈 Feedback & Learning":
     
     drift_result = platform.feedback_engine.detect_drift()
     
+    # Handle three distinct states
     if drift_result["drift_detected"]:
+        # State 1: Drift detected (red/yellow alert)
         st.markdown("""
         <div class="alert-box alert-drift">
             <strong>⚠️ DRIFT DETECTED</strong><br>
@@ -1111,16 +1113,23 @@ elif page == "📈 Feedback & Learning":
                 with col3:
                     change = details['change_pct']
                     st.metric("Change", f"{change:.1f}%", delta=f"{change:.1f}%", delta_color="inverse")
-    else:
+    elif "reason" in drift_result and drift_result["reason"] != "No baseline set":
+        # State 2: No drift detected (green - baseline exists and metrics are stable)
         st.markdown("""
         <div class="alert-box alert-success">
             <strong>✅ NO DRIFT DETECTED</strong><br>
             Quality metrics are stable and within expected ranges.
         </div>
         """, unsafe_allow_html=True)
-        
-        if "reason" in drift_result:
-            st.info(f"ℹ️ {drift_result['reason']}")
+    else:
+        # State 3: Insufficient data (blue info - can't detect drift yet)
+        st.markdown("""
+        <div class="alert-box alert-info">
+            <strong>ℹ️ Insufficient data for baseline</strong><br>
+            Drift detection requires at least 50 feedback entries to establish a baseline. 
+            Current feedback count: {}.
+        </div>
+        """.format(len(platform.feedback_engine.feedback_entries)), unsafe_allow_html=True)
     
     # Drift alerts history
     drift_alerts = platform.feedback_engine.get_drift_alerts()
