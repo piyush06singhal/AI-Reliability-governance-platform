@@ -21,6 +21,9 @@ class OpenAIProvider(LLMProvider):
         if not self.api_key:
             raise ValueError("OpenAI API key not provided")
         
+        # Log that we have a key (but don't print the actual key)
+        print(f"[OpenAI] Initialized with API key: {self.api_key[:10]}...{self.api_key[-4:]}")
+        
         self.base_url = "https://api.openai.com/v1"
     
     async def generate(self, prompt: str, model: str, **kwargs) -> Dict[str, Any]:
@@ -37,6 +40,9 @@ class OpenAIProvider(LLMProvider):
             "temperature": kwargs.get("temperature", 0.7)
         }
         
+        print(f"[OpenAI] Sending request to model: {model}")
+        print(f"[OpenAI] Prompt: {prompt[:100]}...")
+        
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
                 response = await client.post(
@@ -44,8 +50,13 @@ class OpenAIProvider(LLMProvider):
                     headers=headers,
                     json=payload
                 )
+                
+                print(f"[OpenAI] Response status: {response.status_code}")
+                
                 response.raise_for_status()
                 data = response.json()
+                
+                print(f"[OpenAI] Success! Tokens used: {data['usage']['total_tokens']}")
                 
                 return {
                     "response": data["choices"][0]["message"]["content"],
@@ -55,12 +66,17 @@ class OpenAIProvider(LLMProvider):
             except httpx.HTTPStatusError as e:
                 # Log the error and provide appropriate response
                 error_msg = f"OpenAI API returned {e.response.status_code}"
-                print(f"[OpenAI Error] {error_msg}: {e.response.text}")
+                print(f"[OpenAI Error] {error_msg}")
+                print(f"[OpenAI Error] Response body: {e.response.text}")
                 
                 # Check if it's a content policy violation (400 with specific error)
                 try:
                     error_data = e.response.json()
                     error_type = error_data.get("error", {}).get("type", "")
+                    error_message = error_data.get("error", {}).get("message", "")
+                    
+                    print(f"[OpenAI Error] Type: {error_type}")
+                    print(f"[OpenAI Error] Message: {error_message}")
                     
                     if e.response.status_code == 400 and "content_policy" in str(error_data).lower():
                         return {
