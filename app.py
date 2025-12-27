@@ -1266,11 +1266,11 @@ elif page == "🧪 Test Interaction":
         
         with col1:
             model = st.selectbox("🤖 Model", [
+                "claude-3-5-sonnet-20241022",
+                "claude-3-5-haiku-20241022",
                 "gpt-4o",
                 "gpt-4o-mini", 
-                "gpt-3.5-turbo",
-                "claude-3-5-sonnet-20241022",
-                "claude-3-5-haiku-20241022"
+                "gpt-3.5-turbo"
             ])
         
         with col2:
