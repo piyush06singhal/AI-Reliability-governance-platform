@@ -9,6 +9,8 @@ class AnthropicProvider(LLMProvider):
     """Anthropic Claude API provider implementation."""
     
     COST_PER_1K_TOKENS = {
+        "claude-3-5-sonnet-20241022": 0.003,  # $3 per 1M input tokens
+        "claude-3-5-haiku-20241022": 0.001,  # $1 per 1M input tokens
         "claude-3": 0.015,
         "claude-3-opus": 0.015,
         "claude-3-sonnet": 0.003,
@@ -32,13 +34,15 @@ class AnthropicProvider(LLMProvider):
         
         # Map generic model names to Anthropic model names
         model_map = {
+            "claude-3-5-sonnet-20241022": "claude-3-5-sonnet-20241022",
+            "claude-3-5-haiku-20241022": "claude-3-5-haiku-20241022",
             "claude-3": "claude-3-sonnet-20240229",
             "claude-3-opus": "claude-3-opus-20240229",
             "claude-3-sonnet": "claude-3-sonnet-20240229",
             "claude-3-haiku": "claude-3-haiku-20240307"
         }
         
-        anthropic_model = model_map.get(model, "claude-3-sonnet-20240229")
+        anthropic_model = model_map.get(model, model)  # Use model as-is if not in map
         
         payload = {
             "model": anthropic_model,

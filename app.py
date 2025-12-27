@@ -1265,7 +1265,13 @@ elif page == "🧪 Test Interaction":
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            model = st.selectbox("🤖 Model", ["gpt-4", "gpt-3.5-turbo", "claude-3"])
+            model = st.selectbox("🤖 Model", [
+                "gpt-4o",
+                "gpt-4o-mini", 
+                "gpt-3.5-turbo",
+                "claude-3-5-sonnet-20241022",
+                "claude-3-5-haiku-20241022"
+            ])
         
         with col2:
             user_id = st.text_input("👤 User ID (optional)", placeholder="user123")

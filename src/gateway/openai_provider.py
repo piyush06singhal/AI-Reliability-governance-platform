@@ -9,9 +9,11 @@ class OpenAIProvider(LLMProvider):
     """OpenAI API provider implementation."""
     
     COST_PER_1K_TOKENS = {
-        "gpt-4": 0.03,
+        "gpt-4o": 0.0025,  # $2.50 per 1M input tokens
+        "gpt-4o-mini": 0.00015,  # $0.15 per 1M input tokens
         "gpt-4-turbo": 0.01,
-        "gpt-3.5-turbo": 0.002,
+        "gpt-4": 0.03,
+        "gpt-3.5-turbo": 0.0005,  # $0.50 per 1M input tokens
     }
     
     def __init__(self, api_key: str = None):
