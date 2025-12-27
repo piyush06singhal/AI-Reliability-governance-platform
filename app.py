@@ -309,7 +309,7 @@ st.markdown("""
 # Initialize platform
 @st.cache_resource
 def get_platform():
-    return GovernancePlatform()
+    return GovernancePlatform(use_real_llm=True)
 
 platform = get_platform()
 
@@ -1220,6 +1220,15 @@ elif page == "📈 Feedback & Learning":
 elif page == "🧪 Test Interaction":
     st.markdown('<p class="main-header">Test LLM Interaction</p>', unsafe_allow_html=True)
     st.markdown("**Send test requests through the complete governance pipeline**")
+    
+    # Show provider status
+    provider_type = type(platform.gateway.provider).__name__
+    if provider_type == "MockLLMProvider":
+        st.info("ℹ️ **Using Mock LLM Provider** - No API keys configured. Responses are simulated. To use real LLMs, create a `.env` file with your API keys.")
+    elif provider_type == "OpenAIProvider":
+        st.success("✅ **Using OpenAI Provider** - Real LLM responses enabled")
+    elif provider_type == "AnthropicProvider":
+        st.success("✅ **Using Anthropic Provider** - Real LLM responses enabled")
     
     # Quick test scenarios
     st.subheader("⚡ Quick Test Scenarios")
