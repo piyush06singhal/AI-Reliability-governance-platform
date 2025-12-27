@@ -51,16 +51,31 @@ class OpenAIProvider(LLMProvider):
                     "model": model
                 }
             except httpx.HTTPStatusError as e:
-                # Log the error but return a clean mock response
-                error_msg = f"OpenAI API returned {e.response.status_code}: {e.response.reason_phrase}"
-                print(f"[OpenAI Error] {error_msg}")
+                # Log the error and provide appropriate response
+                error_msg = f"OpenAI API returned {e.response.status_code}"
+                print(f"[OpenAI Error] {error_msg}: {e.response.text}")
                 
-                # Return clean mock response without exposing error to user
+                # Check if it's a content policy violation (400 with specific error)
+                try:
+                    error_data = e.response.json()
+                    error_type = error_data.get("error", {}).get("type", "")
+                    
+                    if e.response.status_code == 400 and "content_policy" in str(error_data).lower():
+                        return {
+                            "response": "I cannot assist with that request as it may involve harmful or unethical activities. Please ask something else that I can help with constructively.",
+                            "tokens": len(prompt.split()) + 30,
+                            "model": model,
+                            "error": "content_policy_violation"
+                        }
+                except:
+                    pass
+                
+                # For other errors, return a generic error message
                 return {
-                    "response": f"I cannot assist with that request as it may involve harmful or unethical activities. Please ask something else that I can help with constructively.",
+                    "response": f"I apologize, but I encountered an error processing your request. Please try again or contact support. (Error: {e.response.status_code})",
                     "tokens": len(prompt.split()) + 30,
                     "model": model,
-                    "error": error_msg  # Store error in metadata, not in response text
+                    "error": error_msg
                 }
             except Exception as e:
                 # Fallback to mock response on any other error
