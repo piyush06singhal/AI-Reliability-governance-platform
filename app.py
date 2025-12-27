@@ -951,10 +951,14 @@ elif page == "🛡️ Policy Manager":
                 }.get(decision.action, "badge-info")
                 
                 st.markdown(f"""
-                <div style="padding: 0.5rem; margin: 0.5rem 0; border-left: 3px solid #667eea; background: #f8f9fa; border-radius: 4px;">
+                <div style="padding: 1rem; margin: 0.75rem 0; border-left: 4px solid #667eea; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                     <span class="status-badge {action_color}">{decision.action.upper()}</span><br>
-                    <small><strong>Policy:</strong> {decision.policy_id}</small><br>
-                    <small><strong>Reason:</strong> {decision.reason}</small>
+                    <div style="margin-top: 0.5rem;">
+                        <small style="color: #495057; font-weight: 600;">Policy:</small> 
+                        <small style="color: #212529;">{decision.policy_id}</small><br>
+                        <small style="color: #495057; font-weight: 600;">Reason:</small> 
+                        <small style="color: #212529;">{decision.reason}</small>
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
         
@@ -1187,12 +1191,17 @@ elif page == "📈 Feedback & Learning":
             }.get(feedback["type"], "badge-info")
             
             st.markdown(f"""
-            <div style="padding: 0.75rem; margin: 0.5rem 0; border-left: 3px solid #667eea; background: #f8f9fa; border-radius: 4px;">
+            <div style="padding: 1rem; margin: 0.75rem 0; border-left: 4px solid #667eea; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <span class="status-badge {feedback_color}">{feedback["type"].upper()}</span>
                 <span style="margin-left: 0.5rem;">{"⭐" * feedback["rating"]}</span><br>
-                <small><strong>Trace:</strong> {feedback["trace_id"]}</small><br>
-                <small><strong>Comment:</strong> {feedback["comment"] or "No comment"}</small><br>
-                <small><strong>Time:</strong> {feedback["timestamp"].strftime("%Y-%m-%d %H:%M:%S")}</small>
+                <div style="margin-top: 0.5rem;">
+                    <small style="color: #495057; font-weight: 600;">Trace:</small> 
+                    <small style="color: #212529;">{feedback["trace_id"]}</small><br>
+                    <small style="color: #495057; font-weight: 600;">Comment:</small> 
+                    <small style="color: #212529;">{feedback["comment"] or "No comment"}</small><br>
+                    <small style="color: #495057; font-weight: 600;">Time:</small> 
+                    <small style="color: #212529;">{feedback["timestamp"].strftime("%Y-%m-%d %H:%M:%S")}</small>
+                </div>
             </div>
             """, unsafe_allow_html=True)
     else:
